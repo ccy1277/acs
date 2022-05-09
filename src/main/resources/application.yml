@@ -36,3 +36,9 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: partial
+jwt:
+  tokenHeader: Authorization
+  secret: acs-sercet-1
+  expiration: 1800
+  tokenHead: 'Bearer' # 通常在Authorization标头中使用Bearer模式
+
