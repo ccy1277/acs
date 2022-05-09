@@ -41,4 +41,19 @@ jwt:
   secret: acs-sercet-1
   expiration: 1800
   tokenHead: 'Bearer' # 通常在Authorization标头中使用Bearer模式
+security:
+  ignored:
+    # 安全路径白名单
+    urls:
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /**/*.ico
+      - /swagger-ui/**
+      - /swagger-resources/**
+      - /v3/api-docs
+      - /webjars/springfox-swagger-ui/**
+      - /user/login
+      - /user/register
+      - /user/logout
 
