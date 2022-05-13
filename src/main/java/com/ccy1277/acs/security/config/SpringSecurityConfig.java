@@ -1,9 +1,10 @@
 package com.ccy1277.acs.security.config;
 
 import com.ccy1277.acs.common.utils.JwtTokenUtil;
-import com.ccy1277.acs.security.authentication.AuthAccessDeniedHandler;
-import com.ccy1277.acs.security.authentication.AuthEntryPoint;
-import com.ccy1277.acs.security.authentication.JwtAuthTokenFilter;
+import com.ccy1277.acs.security.authentication.*;
+import com.ccy1277.acs.security.service.DynamicDataSourceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * created by ccy on 2022/5/9
  */
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired(required = false)
+    private DynamicDataSourceService dynamicDataSourceService;
+
     /**
      * 配置springSecurity相关信息 用于配置需要拦截的url路径、jwt过滤器及出异常后的处理器
      */
@@ -57,6 +61,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 自定义权限拦截器 JWT过滤器
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        // 有动态权限配置时添加动态权限校验过滤器
+        if(dynamicDataSourceService != null){
+            registry.and().addFilterBefore(dynamicAuthenticatedFilter(), FilterSecurityInterceptor.class);
+        }
     }
 
     /**
@@ -115,5 +124,23 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtTokenUtil jwtTokenUtil() {
         return new JwtTokenUtil();
+    }
+
+    @ConditionalOnBean(name = "dynamicDataSourceService")
+    @Bean
+    public DynamicAuthenticatedFilter dynamicAuthenticatedFilter() {
+        return new DynamicAuthenticatedFilter();
+    }
+
+    @ConditionalOnBean(name = "dynamicDataSourceService")
+    @Bean
+    public DynamicSecurityMetaDataSource dynamicSecurityMetaDataSource() {
+        return new DynamicSecurityMetaDataSource();
+    }
+
+    @ConditionalOnBean(name = "dynamicDataSourceService")
+    @Bean
+    public DynamicAccessDecisionManager dynamicAccessDecisionManager(){
+        return new DynamicAccessDecisionManager();
     }
 }
