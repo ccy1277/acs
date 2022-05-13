@@ -1,5 +1,6 @@
 package com.ccy1277.acs.sys.service;
 
+import com.ccy1277.acs.sys.dto.UserDto;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -13,6 +14,19 @@ import java.util.List;
  * @since 2022-05-08
  */
 public interface UserService extends IService<User> {
+    /**
+     * 注册
+     * @param userDto 注册信息
+     * @return User
+     */
+    User register(UserDto userDto);
+
+    /**
+     * 登录
+     * @return token
+     */
+    String login(String username, String password);
+
     /**
      * 根据用户名获得后台管理员
      */
