@@ -36,6 +36,12 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     auto-mapping-behavior: partial
+# 自定义redis key
+redis:
+  key:
+    user: 'user'
+    resources: 'resources'
+  expire: 1800
 jwt:
   tokenHeader: Authorization
   secret: acs-sercet-1
