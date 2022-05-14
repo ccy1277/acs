@@ -41,7 +41,7 @@ redis:
   key:
     user: 'user'
     resources: 'resources'
-  expire: 1800
+  expire: 7200
 jwt:
   tokenHeader: Authorization
   secret: acs-sercet-1
