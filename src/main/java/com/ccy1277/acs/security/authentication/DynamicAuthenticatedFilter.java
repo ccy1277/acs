@@ -1,6 +1,8 @@
 package com.ccy1277.acs.security.authentication;
 
 import com.ccy1277.acs.security.config.IgnoreUrlsConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.SecurityMetadataSource;
@@ -19,6 +21,7 @@ import java.io.IOException;
  * created by ccy on 2022/5/12
  */
 public class DynamicAuthenticatedFilter extends AbstractSecurityInterceptor implements Filter {
+    private final static Logger LOGGER = LoggerFactory.getLogger(DynamicAuthenticatedFilter.class);
     //白名单
     @Autowired
     private IgnoreUrlsConfig ignoreUrlsConfig;
@@ -58,11 +61,11 @@ public class DynamicAuthenticatedFilter extends AbstractSecurityInterceptor impl
         for(String path : ignoreUrlsConfig.getUrls()){
             // 匹配除去host（域名或者ip）部分的路径
             if(pathMatcher.match("/acs" + path, request.getRequestURI())){
-                System.out.println(request.getRequestURI() + "::" + path);
                 filterInvocation.getChain().doFilter(filterInvocation.getRequest(), filterInvocation.getResponse());
                 return;
             }
         }
+        LOGGER.info("DynamicAuthenticated resource: {}", request.getRequestURI());
         // 此处会调用AccessDecisionManager中的decide方法进行鉴权操作
         InterceptorStatusToken interceptorStatusToken = super.beforeInvocation(filterInvocation);
         try {
