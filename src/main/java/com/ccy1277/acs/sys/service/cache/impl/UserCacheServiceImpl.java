@@ -36,6 +36,16 @@ public class UserCacheServiceImpl implements UserCacheService {
     }
 
     @Override
+    public boolean deleteUser(String username) {
+        return redisService.delete(REDIS_KEY_ADMIN + ":" + username);
+    }
+
+    @Override
+    public boolean deleteResourceList(Long id) {
+        return redisService.delete(REDIS_KEY_RESOURCES + ":" + id);
+    }
+
+    @Override
     public List<Resource> getResourceList(Long id) {
         return (List<Resource>) redisService.get(REDIS_KEY_RESOURCES + ":" + id);
     }

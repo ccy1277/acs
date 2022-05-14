@@ -21,6 +21,16 @@ public interface UserCacheService {
     void setUser(User user);
 
     /**
+     * 删除用户缓存信息
+     */
+    boolean deleteUser(String username);
+
+    /**
+     * 删除用户权限信息
+     */
+    boolean deleteResourceList(Long id);
+
+    /**
      * 通过用户id获取权限缓存信息
      */
     List<Resource> getResourceList(Long id);
