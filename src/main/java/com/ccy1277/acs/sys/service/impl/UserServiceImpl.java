@@ -1,6 +1,7 @@
 package com.ccy1277.acs.sys.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.exception.ApiException;
 import com.ccy1277.acs.common.exception.Asserts;
 import com.ccy1277.acs.common.result.ResultCode;
@@ -91,6 +92,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return token;
     }
 
+    @Override
+    public boolean logout(String username) {
+        Long id = getUserByUserName(username).getId();
+        if(userCacheService.deleteUser(username) && userCacheService.deleteResourceList(id)){
+            LOGGER.info("{} logout", username);
+            return true;
+        }
+        // 删除该用户的缓存信息
+        return false;
+    }
 
     @Override
     public User getUserByUserName(String username) {
@@ -139,5 +150,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         return null;
+    }
+
+    @Override
+    public Page<User> getUserPagesByName(String username, Integer pageSize, Integer pageNum) {
+        Page<User> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+
+        if(username != null && username.equals("")){
+            wrapper.lambda().like(User::getUsername, username);
+        }
+        return page(page, wrapper);
     }
 }

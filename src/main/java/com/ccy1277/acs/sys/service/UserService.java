@@ -1,5 +1,6 @@
 package com.ccy1277.acs.sys.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.sys.dto.UserDto;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.model.User;
@@ -28,6 +29,11 @@ public interface UserService extends IService<User> {
     String login(String username, String password);
 
     /**
+     * 退出登录
+     */
+    boolean logout(String username);
+
+    /**
      * 根据用户名获得后台管理员
      */
     User getUserByUserName(String username);
@@ -40,5 +46,14 @@ public interface UserService extends IService<User> {
     /**
      * 获取用户的可访问资源
      */
-    List<Resource> getResourceList(Long adminId);
+    List<Resource> getResourceList(Long id);
+
+    /**
+     * 分页获取用户列表
+     * @param username 用户名 （可选）
+     * @param pageSize 页的大小
+     * @param pageNum 页数
+     * @return Page<User>
+     */
+    Page<User> getUserPagesByName(String username, Integer pageSize, Integer pageNum);
 }
