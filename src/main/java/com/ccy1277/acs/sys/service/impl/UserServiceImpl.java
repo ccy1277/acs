@@ -7,11 +7,11 @@ import com.ccy1277.acs.common.exception.Asserts;
 import com.ccy1277.acs.common.result.ResultCode;
 import com.ccy1277.acs.common.utils.JwtTokenUtil;
 import com.ccy1277.acs.sys.dto.UserDto;
-import com.ccy1277.acs.sys.model.UserDetails;
+import com.ccy1277.acs.sys.mapper.RoleMapper;
+import com.ccy1277.acs.sys.model.*;
 import com.ccy1277.acs.sys.mapper.ResourceMapper;
-import com.ccy1277.acs.sys.model.Resource;
-import com.ccy1277.acs.sys.model.User;
 import com.ccy1277.acs.sys.mapper.UserMapper;
+import com.ccy1277.acs.sys.service.UserRoleRelationService;
 import com.ccy1277.acs.sys.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ccy1277.acs.sys.service.cache.UserCacheService;
@@ -26,6 +26,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +46,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserCacheService userCacheService;
     @Autowired(required = false)
     private ResourceMapper resourceMapper;
+    @Autowired(required = false)
+    private RoleMapper roleMapper;
+    @Autowired
+    private UserRoleRelationService userRoleRelationService;
 
     @Override
     public User register(UserDto userDto) {
@@ -157,9 +162,56 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Page<User> page = new Page<>(pageNum, pageSize);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
 
-        if(username != null && username.equals("")){
+        if(username != null && !username.equals("")){
             wrapper.lambda().like(User::getUsername, username);
         }
         return page(page, wrapper);
+    }
+
+    @Override
+    public boolean updateUserById(User user) {
+        User oldUser = this.getById(user.getId());
+        // 密码加密修改
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        LOGGER.info("user {}: updated", user.getId());
+        userCacheService.deleteUser(oldUser.getUsername());
+
+        return this.updateById(user);
+    }
+
+    @Override
+    public boolean deleteUserById(Long id) {
+        User user = this.getById(id);
+        // 删除缓存
+        userCacheService.deleteUser(user.getUsername());
+        userCacheService.deleteResourceList(id);
+        LOGGER.info("user {}: deleted", id);
+        return this.removeById(id);
+    }
+
+    @Override
+    public List<Role> getRoleDetails(Long id) {
+        return roleMapper.getRolesByUserId(id);
+    }
+
+    @Override
+    public boolean updateUserRole(Long userId, List<Long> roleIds) {
+        // 删除旧的角色
+        QueryWrapper<UserRoleRelation> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(UserRoleRelation::getUserId, userId);
+        userRoleRelationService.removeById(wrapper);
+        // 分配新角色
+        List<UserRoleRelation> userRoleRelations = new ArrayList<>();
+        for(Long roleId : roleIds){
+            UserRoleRelation userRoleRelation = new UserRoleRelation();
+            userRoleRelation.setUserId(userId);
+            userRoleRelation.setRoleId(roleId);
+            userRoleRelations.add(userRoleRelation);
+        }
+        LOGGER.info("userRoleRelation {}: updated", userId);
+        userRoleRelationService.saveBatch(userRoleRelations);
+        // 清楚缓存
+        userCacheService.deleteResourceList(userId);
+        return userRoleRelations.size() > 0;
     }
 }

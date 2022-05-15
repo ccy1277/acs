@@ -5,16 +5,19 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.result.CommonPage;
 import com.ccy1277.acs.common.result.CommonResult;
 import com.ccy1277.acs.sys.dto.UserDto;
+import com.ccy1277.acs.sys.model.Role;
 import com.ccy1277.acs.sys.model.User;
 import com.ccy1277.acs.sys.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +37,7 @@ public class UserController {
 
     @ApiOperation("用户登录并返回token")
     @PostMapping("/login")
-    public CommonResult login(UserDto userDto){
+    public CommonResult login(@Validated UserDto userDto){
         String token = userService.login(userDto.getUsername(), userDto.getPassword());
         if (token == null) {
             return CommonResult.validateFailed("用户名或密码错误");
@@ -47,7 +50,7 @@ public class UserController {
 
     @ApiOperation("用户注册")
     @PostMapping("/register")
-    public CommonResult<User> register(UserDto userDto){
+    public CommonResult<User> register(@Validated UserDto userDto){
         User user = userService.register(userDto);
         if(user == null){
             return CommonResult.failed();
@@ -95,6 +98,43 @@ public class UserController {
             return CommonResult.success(users);
         }
         return CommonResult.failed("获取用户列表信息异常");
+    }
+
+    @ApiOperation("编辑用户基本信息")
+    @PostMapping("/edit")
+    public CommonResult editInfo(User user){
+        if(userService.updateUserById(user)){
+            return CommonResult.success(user.getId() + "用户更新信息成功");
+        }
+        return CommonResult.failed(user.getId() + "用户更新信息失败");
+    }
+
+    @ApiOperation("删除用户")
+    @PostMapping("/delete/{id}")
+    public CommonResult deleteUser(@PathVariable Long id){
+        if(userService.deleteUserById(id)){
+            return CommonResult.success(id + "用户删除成功");
+        }
+        return CommonResult.failed(id + "用户删除失败");
+    }
+
+    @ApiOperation("获取指定用户的角色信息")
+    @GetMapping("/urr/{id}")
+    public CommonResult<List<Role>> givenURR(@PathVariable Long id){
+        List<Role> roles = userService.getRoleDetails(id);
+        if(roles != null){
+            return CommonResult.success(roles);
+        }
+        return CommonResult.failed("获取" + id + "用户的角色信息失败");
+    }
+
+    @ApiOperation("给用户分配角色")
+    @PostMapping("/role/update")
+    public CommonResult updateUserRoleRelation(Long userId, List<Long> roleIds){
+        if(userService.updateUserRole(userId, roleIds)){
+            return CommonResult.success(userId + "用户分配角色成功");
+        }
+        return CommonResult.failed(userId + "用户分配角色失败");
     }
 }
 
