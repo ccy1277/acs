@@ -14,4 +14,9 @@
         <result column="hidden" property="hidden" />
     </resultMap>
 
+    <select id="getMenuByRoleId" resultType="com.ccy1277.acs.sys.model.Menu">
+        SELECT m.*
+        FROM role_menu_relation rmr LEFT JOIN menu m ON rmr.menu_id = m.id
+        WHERE rmr.role_id = #{roleId};
+    </select>
 </mapper>
