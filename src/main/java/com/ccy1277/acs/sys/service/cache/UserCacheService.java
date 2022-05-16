@@ -2,6 +2,7 @@ package com.ccy1277.acs.sys.service.cache;
 
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.model.User;
+import com.ccy1277.acs.sys.model.UserRoleRelation;
 
 import java.util.List;
 
@@ -26,9 +27,14 @@ public interface UserCacheService {
     boolean deleteUser(String username);
 
     /**
-     * 删除用户权限信息
+     * 删除用户权限缓存
      */
     boolean deleteResourceList(Long id);
+
+    /**
+     * 角色被删除时，需要删除相应的权限缓存
+     */
+    boolean deleteResourceListByRole(List<UserRoleRelation> roles);
 
     /**
      * 通过用户id获取权限缓存信息

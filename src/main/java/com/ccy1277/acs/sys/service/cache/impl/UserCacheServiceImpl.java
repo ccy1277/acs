@@ -3,12 +3,14 @@ package com.ccy1277.acs.sys.service.cache.impl;
 import com.ccy1277.acs.common.service.RedisService;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.model.User;
+import com.ccy1277.acs.sys.model.UserRoleRelation;
 import com.ccy1277.acs.sys.service.cache.UserCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户缓存管理实现类
@@ -43,6 +45,18 @@ public class UserCacheServiceImpl implements UserCacheService {
     @Override
     public boolean deleteResourceList(Long id) {
         return redisService.delete(REDIS_KEY_RESOURCES + ":" + id);
+    }
+
+    @Override
+    public boolean deleteResourceListByRole(List<UserRoleRelation> userRoleRelations) {
+        // 获取所有用户角色中的角色id组成的集合
+        if(userRoleRelations == null){
+            return false;
+        }
+        List<String> list = userRoleRelations.stream()
+                .map(userRoleRelation -> { return REDIS_KEY_RESOURCES + ":" +userRoleRelation.getUserId();})
+                .collect(Collectors.toList());
+        return redisService.delete(list) > 0;
     }
 
     @Override
