@@ -11,4 +11,10 @@
         <result column="status" property="status" />
     </resultMap>
 
+    <select id="getRolesByUserId" resultType="com.ccy1277.acs.sys.model.Role">
+        SELECT r.id, r.name, r.description, r.create_time, r.status
+        FROM user_role_relation urr LEFT JOIN role r ON r.id = urr.role_id
+        WHERE urr.user_id = #{userId};
+    </select>
+
 </mapper>
