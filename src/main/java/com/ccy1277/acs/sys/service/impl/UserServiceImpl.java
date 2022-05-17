@@ -169,7 +169,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public boolean updateUserById(User user) {
+    public boolean updateUserById(UserDto userDto) {
+        User user = new User();
+        BeanUtils.copyProperties(userDto, user);
         User oldUser = this.getById(user.getId());
         // 密码加密修改
         user.setPassword(passwordEncoder.encode(user.getPassword()));

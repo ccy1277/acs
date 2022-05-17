@@ -1,6 +1,7 @@
 package com.ccy1277.acs.sys.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ccy1277.acs.sys.dto.RoleDto;
 import com.ccy1277.acs.sys.model.Menu;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.model.Role;
@@ -27,12 +28,12 @@ public interface RoleService extends IService<Role> {
     /**
      * 添加角色
      */
-    boolean addRole(Role role);
+    boolean addRole(RoleDto roleDto);
 
     /**
      * 编辑角色基本信息
      */
-    boolean updateRole(Role role);
+    boolean updateRole(RoleDto roleDto);
 
     /**
      * 删除指定角色

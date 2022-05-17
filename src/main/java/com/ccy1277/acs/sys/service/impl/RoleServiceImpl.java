@@ -3,6 +3,7 @@ package com.ccy1277.acs.sys.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.exception.Asserts;
+import com.ccy1277.acs.sys.dto.RoleDto;
 import com.ccy1277.acs.sys.mapper.MenuMapper;
 import com.ccy1277.acs.sys.mapper.ResourceMapper;
 import com.ccy1277.acs.sys.model.*;
@@ -13,6 +14,7 @@ import com.ccy1277.acs.sys.service.RoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ccy1277.acs.sys.service.UserRoleRelationService;
 import com.ccy1277.acs.sys.service.cache.UserCacheService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +54,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
-    public boolean addRole(Role role) {
+    public boolean addRole(RoleDto roleDto) {
+        Role role = new Role();
+        BeanUtils.copyProperties(roleDto, role);
         // 检查角色是否已经存在
         QueryWrapper<Role> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(Role::getName, role.getName());
@@ -68,15 +72,18 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
-    public boolean updateRole(Role role) {
+    public boolean updateRole(RoleDto roleDto) {
+        Role role = new Role();
+        BeanUtils.copyProperties(roleDto, role);
         return this.updateById(role);
     }
 
     @Override
     public boolean deleteRole(Long id) {
         // 删除了角色需要清除缓存
+        userCacheService.deleteResourceListByRole(getUserRoleRelation(id));
         // 删除了角色还需要删除角色与资源的映射关系
-        return userCacheService.deleteResourceListByRole(getUserRoleRelation(id)) && this.removeById(id);
+        return this.removeById(id);
     }
 
     @Override
@@ -126,7 +133,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             roleResourceRelations.add(roleResourceRelation);
         }
         // 清除缓存
-        return userCacheService.deleteResourceListByRole(getUserRoleRelation(id)) && roleResourceRelationService.saveBatch(roleResourceRelations);
+        userCacheService.deleteResourceListByRole(getUserRoleRelation(id));
+        return roleResourceRelationService.saveBatch(roleResourceRelations);
     }
 
     @Override

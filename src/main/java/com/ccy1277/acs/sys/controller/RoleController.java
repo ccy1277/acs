@@ -4,14 +4,17 @@ package com.ccy1277.acs.sys.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.result.CommonPage;
 import com.ccy1277.acs.common.result.CommonResult;
+import com.ccy1277.acs.sys.dto.RoleDto;
 import com.ccy1277.acs.sys.model.Menu;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.model.Role;
 import com.ccy1277.acs.sys.service.RoleService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -21,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/role")
+@Validated
 public class RoleController {
     @Autowired
     private RoleService roleService;
@@ -28,8 +32,8 @@ public class RoleController {
     @ApiOperation("根据角色名分页查看角色列表")
     @GetMapping("/list")
     public CommonResult<CommonPage<Role>> listPagesByName(@RequestParam(required = false) String roleName,
-                                                          @RequestParam(defaultValue = "3") Integer pageSize,
-                                                          @RequestParam(defaultValue = "1") Integer pageNum){
+                                                          @Min(1) @RequestParam(defaultValue = "3") Integer pageSize,
+                                                          @Min(1) @RequestParam(defaultValue = "1") Integer pageNum){
         Page<Role> roles = roleService.getRolePagesByName(roleName, pageSize, pageNum);
         if(roles != null){
             return CommonResult.success(roles);
@@ -50,21 +54,21 @@ public class RoleController {
 
     @ApiOperation("增加角色")
     @PostMapping("/add")
-    public CommonResult addRole(Role role){
-        if(roleService.addRole(role)){
-            return CommonResult.success(null, role.getName() + "添加成功");
+    public CommonResult addRole(@Validated(RoleDto.save.class) @RequestBody RoleDto roleDto){
+        if(roleService.addRole(roleDto)){
+            return CommonResult.success(null, roleDto.getName() + "添加成功");
         }else{
-            return CommonResult.failed(role.getName() + "添加失败");
+            return CommonResult.failed(roleDto.getName() + "添加失败");
         }
     }
 
     @ApiOperation("更新角色信息")
     @PostMapping("/edit")
-    public CommonResult editInfo(Role role){
-        if(roleService.updateRole(role)){
-            return CommonResult.success(null, role.getName() + "更新成功");
+    public CommonResult editInfo(@Validated(RoleDto.update.class) @RequestBody RoleDto roleDto){
+        if(roleService.updateRole(roleDto)){
+            return CommonResult.success(null, "更新成功");
         }else{
-            return CommonResult.failed(role.getName() + "更新失败");
+            return CommonResult.failed("更新失败");
         }
     }
 
@@ -101,8 +105,8 @@ public class RoleController {
     }
 
     @ApiOperation("为角色分配菜单")
-    @PostMapping("/menu/update")
-    public CommonResult updateRoleMenuRelation(Long id, List<Long> menuIds){
+    @PostMapping("/menu/update/{id}")
+    public CommonResult updateRoleMenuRelation(@PathVariable Long id, @RequestBody List<Long> menuIds){
         if(roleService.updateRoleMenu(id, menuIds)){
             return CommonResult.success(null, "分配成功");
         }else{
@@ -110,10 +114,9 @@ public class RoleController {
         }
     }
 
-
     @ApiOperation("为角色分配资源")
-    @PostMapping("/resource/update")
-    public CommonResult updateRoleResourceRelation(Long id, List<Long> resourceIds){
+    @PostMapping("/resource/update/{id}")
+    public CommonResult updateRoleResourceRelation(@PathVariable Long id, @RequestBody List<Long> resourceIds){
         if(roleService.updateRoleResource(id, resourceIds)){
             return CommonResult.success(null, "分配成功");
         }else{

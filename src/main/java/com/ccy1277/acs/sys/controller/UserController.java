@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.Map;
 @Api(tags = "UserController", description = "用户功能控制器")
 @RestController
 @RequestMapping("/user")
+@Validated
 public class UserController {
     @Autowired
     private UserService userService;
@@ -37,7 +40,7 @@ public class UserController {
 
     @ApiOperation("用户登录并返回token")
     @PostMapping("/login")
-    public CommonResult login(@Validated UserDto userDto){
+    public CommonResult login(@Validated @RequestBody UserDto userDto){
         String token = userService.login(userDto.getUsername(), userDto.getPassword());
         if (token == null) {
             return CommonResult.validateFailed("用户名或密码错误");
@@ -50,7 +53,7 @@ public class UserController {
 
     @ApiOperation("用户注册")
     @PostMapping("/register")
-    public CommonResult<User> register(@Validated UserDto userDto){
+    public CommonResult<User> register(@Validated @RequestBody UserDto userDto){
         User user = userService.register(userDto);
         if(user == null){
             return CommonResult.failed();
@@ -59,7 +62,7 @@ public class UserController {
     }
 
     @ApiOperation("用户退出登录")
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public CommonResult logout(Principal principal){
         if(userService.logout(principal.getName())){
             return CommonResult.success(null, "退出登录");
@@ -91,8 +94,8 @@ public class UserController {
     @ApiOperation("根据用户名分页查看用户列表")
     @GetMapping("/list")
     public CommonResult<CommonPage<User>> listPagesByName(@RequestParam(required = false) String username,
-                                                     @RequestParam(defaultValue = "3") Integer pageSize,
-                                                     @RequestParam(defaultValue = "1") Integer pageNum){
+                                                          @Min(1) @RequestParam(defaultValue = "3") Integer pageSize,
+                                                          @Min(1) @RequestParam(defaultValue = "1") Integer pageNum){
         Page<User> users = userService.getUserPagesByName(username, pageSize, pageNum);
         if(users != null){
             return CommonResult.success(users);
@@ -102,11 +105,11 @@ public class UserController {
 
     @ApiOperation("编辑用户基本信息")
     @PostMapping("/edit")
-    public CommonResult editInfo(User user){
-        if(userService.updateUserById(user)){
-            return CommonResult.success(user.getId() + "用户更新信息成功");
+    public CommonResult editInfo(@Validated @RequestBody UserDto userDto){
+        if(userService.updateUserById(userDto)){
+            return CommonResult.success(userDto.getId() + "用户更新信息成功");
         }
-        return CommonResult.failed(user.getId() + "用户更新信息失败");
+        return CommonResult.failed(userDto.getId() + "用户更新信息失败");
     }
 
     @ApiOperation("删除用户")
@@ -120,7 +123,7 @@ public class UserController {
 
     @ApiOperation("获取指定用户的角色信息")
     @GetMapping("/urr/{id}")
-    public CommonResult<List<Role>> givenURR(@PathVariable Long id){
+    public CommonResult<List<Role>> givenUserRoles(@PathVariable Long id){
         List<Role> roles = userService.getRoleDetails(id);
         if(roles != null){
             return CommonResult.success(roles);
@@ -129,8 +132,8 @@ public class UserController {
     }
 
     @ApiOperation("给用户分配角色")
-    @PostMapping("/role/update")
-    public CommonResult updateUserRoleRelation(Long userId, List<Long> roleIds){
+    @PostMapping("/role/update/{userId}")
+    public CommonResult updateUserRoleRelation(@PathVariable Long userId, List<Long> roleIds){
         if(userService.updateUserRole(userId, roleIds)){
             return CommonResult.success(userId + "用户分配角色成功");
         }
