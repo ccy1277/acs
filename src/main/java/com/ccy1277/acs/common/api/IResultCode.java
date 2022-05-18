@@ -1,4 +1,4 @@
-package com.ccy1277.acs.common.result;
+package com.ccy1277.acs.common.api;
 
 /**
  * 封装 Code

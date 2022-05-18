@@ -2,8 +2,8 @@ package com.ccy1277.acs.sys.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ccy1277.acs.common.result.CommonPage;
-import com.ccy1277.acs.common.result.CommonResult;
+import com.ccy1277.acs.common.api.CommonPage;
+import com.ccy1277.acs.common.api.CommonResult;
 import com.ccy1277.acs.sys.dto.UserDto;
 import com.ccy1277.acs.sys.model.Role;
 import com.ccy1277.acs.sys.model.User;
@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;

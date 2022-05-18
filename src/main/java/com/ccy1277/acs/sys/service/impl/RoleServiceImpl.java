@@ -1,5 +1,6 @@
 package com.ccy1277.acs.sys.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.exception.Asserts;
@@ -47,7 +48,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         Page<Role> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Role> wrapper = new QueryWrapper<>();
 
-        if(roleName != null && !roleName.equals("")){
+        if(StrUtil.isNotEmpty(roleName)){
             wrapper.lambda().like(Role::getName, roleName);
         }
         return page(page, wrapper);

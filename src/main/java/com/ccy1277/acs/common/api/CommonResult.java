@@ -1,4 +1,4 @@
-package com.ccy1277.acs.common.result;
+package com.ccy1277.acs.common.api;
 
 /**
  * 自定义统一返回结果

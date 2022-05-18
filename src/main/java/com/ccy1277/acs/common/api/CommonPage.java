@@ -1,4 +1,4 @@
-package com.ccy1277.acs.common.result;
+package com.ccy1277.acs.common.api;
 
 import cn.hutool.core.convert.Convert;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

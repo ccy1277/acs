@@ -1,10 +1,11 @@
 package com.ccy1277.acs.sys.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.exception.ApiException;
 import com.ccy1277.acs.common.exception.Asserts;
-import com.ccy1277.acs.common.result.ResultCode;
+import com.ccy1277.acs.common.api.ResultCode;
 import com.ccy1277.acs.common.utils.JwtTokenUtil;
 import com.ccy1277.acs.sys.dto.UserDto;
 import com.ccy1277.acs.sys.mapper.RoleMapper;
@@ -162,7 +163,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Page<User> page = new Page<>(pageNum, pageSize);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
 
-        if(username != null && !username.equals("")){
+        if(StrUtil.isNotEmpty(username)){
             wrapper.lambda().like(User::getUsername, username);
         }
         return page(page, wrapper);

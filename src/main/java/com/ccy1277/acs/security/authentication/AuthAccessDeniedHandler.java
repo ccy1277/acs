@@ -1,7 +1,7 @@
 package com.ccy1277.acs.security.authentication;
 
 import cn.hutool.json.JSONUtil;
-import com.ccy1277.acs.common.result.CommonResult;
+import com.ccy1277.acs.common.api.CommonResult;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 

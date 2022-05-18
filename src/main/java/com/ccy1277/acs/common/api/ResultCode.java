@@ -1,4 +1,4 @@
-package com.ccy1277.acs.common.result;
+package com.ccy1277.acs.common.api;
 
 /**
  * enum 定义常用的 Code

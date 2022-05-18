@@ -1,5 +1,6 @@
 package com.ccy1277.acs.sys.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.sys.model.Resource;
@@ -21,7 +22,7 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
         Page<Resource> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Resource> wrapper = new QueryWrapper<>();
 
-        if(resourceName != null && !resourceName.equals("")){
+        if(StrUtil.isNotEmpty(resourceName)){
             wrapper.lambda().like(Resource::getName, resourceName);
         }
         return page(page, wrapper);

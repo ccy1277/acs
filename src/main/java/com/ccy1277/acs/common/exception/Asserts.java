@@ -1,6 +1,6 @@
 package com.ccy1277.acs.common.exception;
 
-import com.ccy1277.acs.common.result.IResultCode;
+import com.ccy1277.acs.common.api.IResultCode;
 
 /**
  * 自定义断言类

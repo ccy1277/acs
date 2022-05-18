@@ -1,6 +1,6 @@
 package com.ccy1277.acs.common.exception;
 
-import com.ccy1277.acs.common.result.CommonResult;
+import com.ccy1277.acs.common.api.CommonResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

@@ -1,5 +1,6 @@
 package com.ccy1277.acs.sys.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.sys.model.Menu;
@@ -21,7 +22,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Page<Menu> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Menu> wrapper = new QueryWrapper<>();
 
-        if(menuName != null && menuName.equals("")){
+        if(StrUtil.isNotEmpty(menuName)){
             wrapper.lambda().like(Menu::getName, menuName);
         }
         return page(page, wrapper);

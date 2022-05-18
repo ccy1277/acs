@@ -2,8 +2,8 @@ package com.ccy1277.acs.sys.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ccy1277.acs.common.result.CommonPage;
-import com.ccy1277.acs.common.result.CommonResult;
+import com.ccy1277.acs.common.api.CommonPage;
+import com.ccy1277.acs.common.api.CommonResult;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.service.ResourceService;
 import io.swagger.annotations.ApiOperation;
