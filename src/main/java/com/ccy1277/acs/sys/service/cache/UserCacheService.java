@@ -32,9 +32,9 @@ public interface UserCacheService {
     boolean deleteResourceList(Long id);
 
     /**
-     * 角色被删除时，需要删除相应的权限缓存
+     * 根据用户id批量删除相应的权限缓存
      */
-    boolean deleteResourceListByRole(List<UserRoleRelation> roles);
+    boolean deleteResourceListBatch(List<Long> ids);
 
     /**
      * 通过用户id获取权限缓存信息

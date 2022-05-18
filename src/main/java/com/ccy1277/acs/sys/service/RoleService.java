@@ -68,5 +68,5 @@ public interface RoleService extends IService<Role> {
     /**
      * 根据角色id查找对应的用户关系
      */
-    List<UserRoleRelation> getUserRoleRelation(Long roleId);
+    List<Long> getUserRoleRelation(Long roleId);
 }

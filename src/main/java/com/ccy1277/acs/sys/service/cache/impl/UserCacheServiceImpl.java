@@ -48,13 +48,12 @@ public class UserCacheServiceImpl implements UserCacheService {
     }
 
     @Override
-    public boolean deleteResourceListByRole(List<UserRoleRelation> userRoleRelations) {
-        // 获取所有用户角色中的角色id组成的集合
-        if(userRoleRelations == null){
+    public boolean deleteResourceListBatch(List<Long> ids) {
+        if(ids == null){
             return false;
         }
-        List<String> list = userRoleRelations.stream()
-                .map(userRoleRelation -> { return REDIS_KEY_RESOURCES + ":" +userRoleRelation.getUserId();})
+        List<String> list = ids.stream()
+                .map(id -> REDIS_KEY_RESOURCES + ":" + id)
                 .collect(Collectors.toList());
         return redisService.delete(list) > 0;
     }

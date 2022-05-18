@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色服务实现类
@@ -82,7 +83,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Override
     public boolean deleteRole(Long id) {
         // 删除了角色需要清除缓存
-        userCacheService.deleteResourceListByRole(getUserRoleRelation(id));
+        userCacheService.deleteResourceListBatch(getUserRoleRelation(id));
         // 删除了角色还需要删除角色与资源的映射关系
         return this.removeById(id);
     }
@@ -134,14 +135,21 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             roleResourceRelations.add(roleResourceRelation);
         }
         // 清除缓存
-        userCacheService.deleteResourceListByRole(getUserRoleRelation(id));
+        userCacheService.deleteResourceListBatch(getUserRoleRelation(id));
         return roleResourceRelationService.saveBatch(roleResourceRelations);
     }
 
     @Override
-    public List<UserRoleRelation> getUserRoleRelation(Long roleId) {
+    public List<Long> getUserRoleRelation(Long roleId) {
         QueryWrapper<UserRoleRelation> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(UserRoleRelation::getRoleId, roleId);
-        return userRoleRelationService.list(wrapper);
+        List<UserRoleRelation> userRoleRelations = userRoleRelationService.list(wrapper);
+
+        if(userRoleRelations == null){
+            return null;
+        }
+        return userRoleRelations.stream()
+                .map(UserRoleRelation::getUserId)
+                .collect(Collectors.toList());
     }
 }
