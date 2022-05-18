@@ -28,4 +28,12 @@
         FROM role_resource_relation rrr LEFT JOIN resource r ON rrr.resource_id = r.id
         WHERE rrr.role_id = #{roleId};
     </select>
+
+    <select id="getUserIdListById" resultType="Long">
+        SELECT DISTINCT urr.user_id
+        FROM resource r
+            LEFT JOIN role_resource_relation rrr ON r.id = rrr.resource_id
+            LEFT JOIN user_role_relation urr ON urr.role_id = rrr.role_id
+        WHERE r.id = #{resourceId};
+    </select>
 </mapper>
