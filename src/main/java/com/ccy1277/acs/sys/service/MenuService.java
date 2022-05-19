@@ -1,6 +1,7 @@
 package com.ccy1277.acs.sys.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ccy1277.acs.sys.dto.MenuDto;
 import com.ccy1277.acs.sys.model.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ccy1277.acs.sys.model.Role;
@@ -19,4 +20,14 @@ public interface MenuService extends IService<Menu> {
      * @return Page<Menu>
      */
     Page<Menu> getMenuPagesByName(String menuName, Integer pageSize, Integer pageNum);
+
+    /**
+     * 增加后台菜单
+     */
+    boolean addMenu(MenuDto menuDto);
+
+    /**
+     * 更新后台菜单
+     */
+    boolean updateMenu(MenuDto menuDto);
 }
