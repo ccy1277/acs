@@ -61,5 +61,4 @@ security:
       - /webjars/springfox-swagger-ui/**
       - /user/login
       - /user/register
-      - /user/logout
 
