@@ -36,7 +36,7 @@ public class UserDto {
     private String nickname;
 
     @ApiModelProperty(value = "介绍")
-    private String des;
+    private String description;
 
     /**
      * 注册校验规则
