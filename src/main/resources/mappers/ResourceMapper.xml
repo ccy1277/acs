@@ -13,14 +13,13 @@
     </resultMap>
 
     <select id="getResourceList" resultType="com.ccy1277.acs.sys.model.Resource">
-        SELECT
+        SELECT DISTINCT
             res.*
         FROM
             user_role_relation urr
-                LEFT JOIN role r ON urr.role_id = r.id
-                LEFT JOIN role_resource_relation rrr ON r.id = rrr.role_id
+                LEFT JOIN role_resource_relation rrr ON urr.role_id = rrr.role_id
                 LEFT JOIN resource res ON res.id = rrr.resource_id
-        WHERE urr.user_id = #{userId};
+        WHERE urr.user_id = #{userId} AND res.id IS NOT NULL;
     </select>
 
     <select id="getResourceListByRoleId" resultType="com.ccy1277.acs.sys.model.Resource">
