@@ -4,6 +4,8 @@ package com.ccy1277.acs.sys.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.api.CommonPage;
 import com.ccy1277.acs.common.api.CommonResult;
+import com.ccy1277.acs.common.api.ResultCode;
+import com.ccy1277.acs.common.exception.ApiException;
 import com.ccy1277.acs.sys.dto.UserDto;
 import com.ccy1277.acs.sys.model.Role;
 import com.ccy1277.acs.sys.model.User;
@@ -39,7 +41,7 @@ public class UserController {
 
     @ApiOperation("用户登录并返回token")
     @PostMapping("/login")
-    public CommonResult login(@Validated @RequestBody UserDto userDto){
+    public CommonResult login(@Validated(value = {UserDto.login.class}) @RequestBody UserDto userDto){
         String token = userService.login(userDto.getUsername(), userDto.getPassword());
         if (token == null) {
             return CommonResult.validateFailed("用户名或密码错误");
@@ -52,7 +54,7 @@ public class UserController {
 
     @ApiOperation("用户注册")
     @PostMapping("/register")
-    public CommonResult<User> register(@Validated @RequestBody UserDto userDto){
+    public CommonResult<User> register(@Validated(value = {UserDto.register.class}) @RequestBody UserDto userDto){
         User user = userService.register(userDto);
         if(user == null){
             return CommonResult.failed();
@@ -87,7 +89,7 @@ public class UserController {
         if(user != null){
             return CommonResult.success(user);
         }
-        return CommonResult.failed("获取指定用户信息异常");
+        throw new ApiException(ResultCode.USER_NOTFOUND);
     }
 
     @ApiOperation("根据用户名分页查看用户列表")
@@ -104,7 +106,7 @@ public class UserController {
 
     @ApiOperation("编辑用户基本信息")
     @PostMapping("/edit")
-    public CommonResult editInfo(@Validated @RequestBody UserDto userDto){
+    public CommonResult editInfo(@Validated(value = {UserDto.update.class}) @RequestBody UserDto userDto){
         if(userService.updateUserById(userDto)){
             return CommonResult.success(userDto.getId() + "用户更新信息成功");
         }
@@ -121,18 +123,21 @@ public class UserController {
     }
 
     @ApiOperation("获取指定用户的角色信息")
-    @GetMapping("/urr/{id}")
+    @GetMapping("/role/{id}")
     public CommonResult<List<Role>> givenUserRoles(@PathVariable Long id){
         List<Role> roles = userService.getRoleDetails(id);
         if(roles != null){
-            return CommonResult.success(roles);
+            if(roles.size() > 0){
+                return CommonResult.success(roles);
+            }
+            return CommonResult.success(roles, "该用户尚未分配角色或此用户不存在");
         }
         return CommonResult.failed("获取" + id + "用户的角色信息失败");
     }
 
     @ApiOperation("给用户分配角色")
     @PostMapping("/role/update/{userId}")
-    public CommonResult updateUserRoleRelation(@PathVariable Long userId, List<Long> roleIds){
+    public CommonResult updateUserRoleRelation(@PathVariable Long userId, @RequestBody List<Long> roleIds){
         if(userService.updateUserRole(userId, roleIds)){
             return CommonResult.success(userId + "用户分配角色成功");
         }

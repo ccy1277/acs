@@ -128,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userCacheService.setUser(user);
             return user;
         }
-        throw new ApiException(ResultCode.MSG_NOTFOUND);
+        throw new ApiException(ResultCode.USER_NOTFOUND);
     }
 
     @Override
@@ -202,7 +202,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 删除旧的角色
         QueryWrapper<UserRoleRelation> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(UserRoleRelation::getUserId, userId);
-        userRoleRelationService.removeById(wrapper);
+        userRoleRelationService.remove(wrapper);
         // 分配新角色
         List<UserRoleRelation> userRoleRelations = new ArrayList<>();
         for(Long roleId : roleIds){
@@ -213,7 +213,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         LOGGER.info("userRoleRelation {}: updated", userId);
         userRoleRelationService.saveBatch(userRoleRelations);
-        // 清楚缓存
+        // 清除缓存
         userCacheService.deleteResourceList(userId);
         return userRoleRelations.size() > 0;
     }
