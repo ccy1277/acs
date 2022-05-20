@@ -203,6 +203,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<UserRoleRelation> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(UserRoleRelation::getUserId, userId);
         userRoleRelationService.remove(wrapper);
+        // 清空用户角色关系成功
+        if(roleIds.size() == 0){
+            return true;
+        }
         // 分配新角色
         List<UserRoleRelation> userRoleRelations = new ArrayList<>();
         for(Long roleId : roleIds){

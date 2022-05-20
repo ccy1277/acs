@@ -41,11 +41,6 @@ public interface RoleService extends IService<Role> {
     boolean deleteRole(Long id);
 
     /**
-     * 更改角色的状态
-     */
-    boolean actRole(Long id, Integer status);
-
-    /**
      * 获取角色的菜单
      */
     List<Menu> getRoleMenu(Long id);

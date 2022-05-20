@@ -89,11 +89,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
-    public boolean actRole(Long id, Integer status) {
-        return false;
-    }
-
-    @Override
     public List<Menu> getRoleMenu(Long id) {
         return menuMapper.getMenuByRoleId(id);
     }
@@ -104,6 +99,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         QueryWrapper<RoleMenuRelation> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(RoleMenuRelation::getRoleId, id);
         roleMenuRelationService.remove(wrapper);
+        // 清空角色菜单关系成功
+        if(menuIds.size() == 0){
+            return true;
+        }
         // 分配新菜单
         List<RoleMenuRelation> roleMenuRelations = new ArrayList<>();
         for(Long menuId : menuIds){
@@ -126,6 +125,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         QueryWrapper<RoleResourceRelation> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(RoleResourceRelation::getRoleId, id);
         roleResourceRelationService.remove(wrapper);
+        // 清除缓存
+        userCacheService.deleteResourceListBatch(getUserRoleRelation(id));// 清空角色菜单关系
+        // 清空角色资源关系成功
+        if(resourceIds.size() == 0){
+            return true;
+        }
         // 分配新资源
         List<RoleResourceRelation> roleResourceRelations = new ArrayList<>();
         for(Long resourceId : resourceIds){
@@ -134,8 +139,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             roleResourceRelation.setRoleId(id);
             roleResourceRelations.add(roleResourceRelation);
         }
-        // 清除缓存
-        userCacheService.deleteResourceListBatch(getUserRoleRelation(id));
         return roleResourceRelationService.saveBatch(roleResourceRelations);
     }
 

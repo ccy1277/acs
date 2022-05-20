@@ -4,11 +4,14 @@ package com.ccy1277.acs.sys.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ccy1277.acs.common.api.CommonPage;
 import com.ccy1277.acs.common.api.CommonResult;
+import com.ccy1277.acs.common.api.ResultCode;
+import com.ccy1277.acs.common.exception.ApiException;
 import com.ccy1277.acs.sys.dto.RoleDto;
 import com.ccy1277.acs.sys.model.Menu;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.model.Role;
 import com.ccy1277.acs.sys.service.RoleService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/role")
 @Validated
+@Api(tags = "RoleController", description = "角色功能控制器")
 public class RoleController {
     @Autowired
     private RoleService roleService;
@@ -47,18 +51,17 @@ public class RoleController {
         Role role = roleService.getById(id);
         if(role != null){
             return CommonResult.success(role, "查询成功");
-        }else{
-            return CommonResult.failed("查询失败");
         }
+        throw new ApiException(ResultCode.USER_NOTFOUND);
     }
 
     @ApiOperation("增加角色")
     @PostMapping("/add")
     public CommonResult addRole(@Validated(RoleDto.save.class) @RequestBody RoleDto roleDto){
         if(roleService.addRole(roleDto)){
-            return CommonResult.success(null, roleDto.getName() + "添加成功");
+            return CommonResult.success(null, "添加成功");
         }else{
-            return CommonResult.failed(roleDto.getName() + "添加失败");
+            return CommonResult.failed("添加失败");
         }
     }
 
@@ -83,7 +86,7 @@ public class RoleController {
     }
 
     @ApiOperation("获取指定的角色菜单")
-    @GetMapping("/rmr/{id}")
+    @GetMapping("/menu/{id}")
     public CommonResult<List<Menu>> givenRoleMenu(@PathVariable Long id){
         List<Menu> menus = roleService.getRoleMenu(id);
         if(menus != null){
@@ -94,7 +97,7 @@ public class RoleController {
     }
 
     @ApiOperation("获取指定的角色资源")
-    @GetMapping("/rrr/{id}")
+    @GetMapping("/resource/{id}")
     public CommonResult<List<Resource>> givenRoleResource(@PathVariable Long id){
         List<Resource> resources = roleService.getRoleResource(id);
         if(resources != null){
@@ -106,7 +109,7 @@ public class RoleController {
 
     @ApiOperation("为角色分配菜单")
     @PostMapping("/menu/update/{id}")
-    public CommonResult updateRoleMenuRelation(@PathVariable Long id, @RequestBody List<Long> menuIds){
+    public CommonResult updateRoleMenuRelation(@PathVariable Long id,  @RequestBody List<Long> menuIds){
         if(roleService.updateRoleMenu(id, menuIds)){
             return CommonResult.success(null, "分配成功");
         }else{
