@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * 角色dto
@@ -11,9 +12,9 @@ import javax.validation.constraints.NotEmpty;
  */
 @Data
 public class RoleDto {
-    @NotEmpty(groups = {update.class})
+    @NotNull(groups = {update.class})
     @ApiModelProperty(value = "角色id(更新角色时必须包含此参数)")
-    private String id;
+    private Long id;
 
     @ApiModelProperty(value = "角色名(创建角色时必须包含此参数)")
     @NotEmpty(groups = {save.class})

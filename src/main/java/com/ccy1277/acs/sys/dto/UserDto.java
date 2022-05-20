@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * 用户登录注册dto
@@ -12,8 +13,9 @@ import javax.validation.constraints.NotEmpty;
  */
 @Data
 public class UserDto {
-    @ApiModelProperty(value = "角色id")
-    private String id;
+    @NotNull(groups = {update.class})
+    @ApiModelProperty(value = "用户id")
+    private Long id;
 
     @NotEmpty(groups = {login.class, register.class})
     @ApiModelProperty(value = "用户名", required = true)

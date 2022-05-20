@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
 @Data
 @ApiModel(value="Menu传输对象", description="菜单")
 public class MenuDto {
-    @NotEmpty(groups = {update.class})
+    @NotNull(groups = {update.class})
     @ApiModelProperty(value = "菜单id")
     private Long id;
 

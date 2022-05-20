@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -13,15 +14,12 @@ import java.util.Date;
 @Data
 public class ResourceDto {
 
-    @NotEmpty(groups = {update.class})
+    @NotNull(groups = {update.class})
     @ApiModelProperty(value = "资源id(更新资源时必须包含此参数)")
     private Long id;
 
     @ApiModelProperty(value = "分类ID")
     private Long categoryId;
-
-    @ApiModelProperty(value = "创建时间")
-    private Date createTime;
 
     @NotEmpty(groups = {save.class})
     @ApiModelProperty(value = "资源名称")
