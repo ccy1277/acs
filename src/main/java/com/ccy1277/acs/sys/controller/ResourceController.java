@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+
 /**
  * 资源管理功能控制器
  * @author ccy1277
@@ -21,15 +23,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/resource")
 @Api(tags = "ResourceController", description = "资源功能控制器")
+@Validated
 public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
-    @ApiOperation("分页查看菜单列表")
+    @ApiOperation("分页查看资源列表")
     @GetMapping("/list")
     public CommonResult<CommonPage<Resource>> listPagesByName(@RequestParam(required = false) String resourceName,
-                                                              @RequestParam(defaultValue = "3") Integer pageSize,
-                                                              @RequestParam(defaultValue = "1") Integer pageNum){
+                                                              @Min(1) @RequestParam(defaultValue = "3") Integer pageSize,
+                                                              @Min(1) @RequestParam(defaultValue = "1") Integer pageNum){
         Page<Resource> resources = resourceService.getResourcePagesByName(resourceName, pageSize, pageNum);
         if(resources != null){
             return CommonResult.success(resources);

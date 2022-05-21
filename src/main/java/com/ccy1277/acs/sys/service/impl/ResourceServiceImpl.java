@@ -7,12 +7,13 @@ import com.ccy1277.acs.common.exception.Asserts;
 import com.ccy1277.acs.sys.dto.ResourceDto;
 import com.ccy1277.acs.sys.model.Resource;
 import com.ccy1277.acs.sys.mapper.ResourceMapper;
+import com.ccy1277.acs.sys.model.RoleResourceRelation;
 import com.ccy1277.acs.sys.service.ResourceService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ccy1277.acs.sys.service.RoleResourceRelationService;
 import com.ccy1277.acs.sys.service.cache.UserCacheService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,6 +30,8 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
     private ResourceMapper resourceMapper;
     @Autowired
     private UserCacheService userCacheService;
+    @Autowired
+    private RoleResourceRelationService roleResourceRelationService;
 
     @Override
     public Page<Resource> getResourcePagesByName(String resourceName, Integer pageSize, Integer pageNum) {
@@ -69,8 +72,12 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
 
     @Override
     public boolean deleteResource(Long id) {
-        // 删除了角色需要清除缓存
+        // 删除资源需要清除缓存
         userCacheService.deleteResourceListBatch(getUserRoleRelation(id));
+        // 删除资源需要清除资源与角色的关系
+        QueryWrapper<RoleResourceRelation> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(RoleResourceRelation::getResourceId, id);
+        roleResourceRelationService.remove(wrapper);
         return this.removeById(id);
     }
 
