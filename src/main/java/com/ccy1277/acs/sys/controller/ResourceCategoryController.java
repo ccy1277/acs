@@ -51,7 +51,7 @@ public class ResourceCategoryController {
 
 
     @ApiOperation("删除分类")
-    @PostMapping("/delete/{id}")
+    @GetMapping("/delete/{id}")
     public CommonResult deleteResourceCat(@PathVariable Long id){
         if(resourceCategoryService.removeById(id)){
             return CommonResult.success(null, "删除分类成功");
@@ -62,7 +62,7 @@ public class ResourceCategoryController {
 
     @ApiOperation("更新分类")
     @PostMapping("/update")
-    public CommonResult updateResourceCat(@Validated(value = {ResourceDto.update.class}) @RequestBody ResourceCatDto resourceCatDto){
+    public CommonResult updateResourceCat(@Validated(value = {ResourceCatDto.update.class}) @RequestBody ResourceCatDto resourceCatDto){
         if(resourceCategoryService.updateResourceCat(resourceCatDto)){
             return CommonResult.success(null, "更新分类成功");
         }else{

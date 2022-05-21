@@ -23,6 +23,7 @@ public class ResourceCategoryServiceImpl extends ServiceImpl<ResourceCategoryMap
         ResourceCategory resourceCategory = new ResourceCategory();
         BeanUtils.copyProperties(resourceCatDto, resourceCategory);
         resourceCategory.setCreateTime(new Date());
+        resourceCategory.setSort(0);
 
         return this.save(resourceCategory);
     }
