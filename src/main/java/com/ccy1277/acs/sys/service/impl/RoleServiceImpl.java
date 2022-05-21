@@ -82,9 +82,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Override
     public boolean deleteRole(Long id) {
-        // 删除了角色需要清除缓存
+        // 删除角色需要清除缓存
         userCacheService.deleteResourceListBatch(getUserRoleRelation(id));
-        // 删除了角色还需要删除角色与资源的映射关系
+        // 删除角色与用户的关系
+        clearUserRoleRelation(id);
+        // 删除角色与菜单的关系
+        clearRoleMenuRelation(id);
+        // 删除角色与资源的关系
+        clearRoleResourceRelation(id);
+
         return this.removeById(id);
     }
 
@@ -96,9 +102,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Override
     public boolean updateRoleMenu(Long id, List<Long> menuIds) {
         // 删除旧的菜单
-        QueryWrapper<RoleMenuRelation> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(RoleMenuRelation::getRoleId, id);
-        roleMenuRelationService.remove(wrapper);
+        clearRoleMenuRelation(id);
         // 清空角色菜单关系成功
         if(menuIds.size() == 0){
             return true;
@@ -122,9 +126,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Override
     public boolean updateRoleResource(Long id, List<Long> resourceIds) {
         // 清除旧的资源
-        QueryWrapper<RoleResourceRelation> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(RoleResourceRelation::getRoleId, id);
-        roleResourceRelationService.remove(wrapper);
+        clearRoleResourceRelation(id);
         // 清除缓存
         userCacheService.deleteResourceListBatch(getUserRoleRelation(id));// 清空角色菜单关系
         // 清空角色资源关系成功
@@ -155,4 +157,23 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
                 .map(UserRoleRelation::getUserId)
                 .collect(Collectors.toList());
     }
+
+    private boolean clearUserRoleRelation(Long id){
+        QueryWrapper<UserRoleRelation> userRoleRelationWrapper = new QueryWrapper<>();
+        userRoleRelationWrapper.lambda().eq(UserRoleRelation::getRoleId, id);
+        return userRoleRelationService.remove(userRoleRelationWrapper);
+    }
+
+    private boolean clearRoleResourceRelation(Long id){
+        QueryWrapper<RoleResourceRelation> roleResourceRelationWrapper = new QueryWrapper<>();
+        roleResourceRelationWrapper.lambda().eq(RoleResourceRelation::getRoleId, id);
+        return roleResourceRelationService.remove(roleResourceRelationWrapper);
+    }
+
+    private boolean clearRoleMenuRelation(Long id){
+        QueryWrapper<RoleMenuRelation> roleMenuRelationWrapper = new QueryWrapper<>();
+        roleMenuRelationWrapper.lambda().eq(RoleMenuRelation::getRoleId, id);
+        return roleMenuRelationService.remove(roleMenuRelationWrapper);
+    }
+
 }
