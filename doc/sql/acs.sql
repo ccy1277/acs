@@ -20,7 +20,7 @@ CREATE TABLE user(
 # 角色表
 CREATE TABLE role(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(32) NOT NULL COMMENT '角色名',
+    name VARCHAR(32) NOT NULL UNIQUE COMMENT '角色名',
     description LONGTEXT COMMENT '角色描述',
     create_time DATETIME COMMENT '注册时间',
     status INT DEFAULT 1 COMMENT '角色状态 1: 激活 0: 禁用'
@@ -38,7 +38,7 @@ CREATE TABLE menu(
     id BIGINT PRIMARY KEY auto_increment,
     parent_id BIGINT COMMENT '父级ID',
     create_time DATETIME COMMENT '创建时间',
-    name VARCHAR(32) COMMENT '菜单名称',
+    name VARCHAR(32) UNIQUE COMMENT '菜单名称',
     level INT	COMMENT '菜单级数',
     sort INT	COMMENT '菜单排序',
     icon VARCHAR(200) COMMENT '菜单前端图标',
@@ -57,7 +57,7 @@ CREATE TABLE resource(
     id BIGINT PRIMARY KEY auto_increment,
     category_id BIGINT COMMENT '分类ID',
     create_time DATETIME COMMENT '创建时间',
-    name VARCHAR(32) COMMENT '资源名称',
+    name VARCHAR(32) UNIQUE COMMENT '资源名称',
     url VARCHAR(200) COMMENT '资源URL',
     description LONGTEXT COMMENT '描述'
 );
@@ -65,7 +65,7 @@ CREATE TABLE resource(
 # 资源分类表
 CREATE TABLE resource_category(
     id BIGINT PRIMARY KEY auto_increment,
-    name VARCHAR(32) COMMENT '分类名称',
+    name VARCHAR(32) UNIQUE COMMENT '分类名称',
     create_time DATETIME COMMENT '创建时间',
     sort INT COMMENT '排序',
     description LONGTEXT COMMENT '描述'
