@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,9 +38,16 @@ public class GlobalExceptionHandler {
         // 从异常对象中拿到ObjectError对象
         if (!e.getBindingResult().getAllErrors().isEmpty()){
             for(ObjectError error:e.getBindingResult().getAllErrors()){
-                list.add(error.getDefaultMessage());
+                list.add(e.getParameter().toString() + error.getDefaultMessage());
             }
         }
         return CommonResult.validateFailed(list.toString());
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public CommonResult handleConstraintViolationException(ConstraintViolationException e){
+        return CommonResult.validateFailed(e.getMessage());
     }
 }
