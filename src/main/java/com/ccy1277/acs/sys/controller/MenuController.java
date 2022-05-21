@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+
 /**
  * 菜单管理功能控制器
  * @author ccy1277
@@ -21,18 +23,19 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/menu")
 @Api(tags = "MenuController", description = "菜单功能控制器")
+@Validated
 public class MenuController {
     @Autowired
     private MenuService menuService;
 
-    @ApiOperation("根据菜单名分页查看菜单列表")
+    @ApiOperation("分页查看菜单列表")
     @GetMapping("/list")
     public CommonResult<CommonPage<Menu>> listPagesByName(@RequestParam(required = false) String menuName,
-                                                          @RequestParam(defaultValue = "3") Integer pageSize,
-                                                          @RequestParam(defaultValue = "1") Integer pageNum){
+                                                          @Min(1) @RequestParam(defaultValue = "3") Integer pageSize,
+                                                          @Min(1) @RequestParam(defaultValue = "1") Integer pageNum){
         Page<Menu> menus = menuService.getMenuPagesByName(menuName, pageSize, pageNum);
         if(menus != null){
-            return CommonResult.success(menus);
+            return CommonResult.success(menus, "获取菜单列表信息成功");
         }
         return CommonResult.failed("获取菜单列表信息异常");
     }
@@ -57,5 +60,14 @@ public class MenuController {
         }
     }
 
+    @ApiOperation("删除菜单信息")
+    @GetMapping("/delete/{id}")
+    public CommonResult deleteMenu(@PathVariable Long id){
+        if(menuService.deleteMenu(id)){
+            return CommonResult.success(null, "菜单删除成功");
+        }else{
+            return CommonResult.failed("菜单删除失败");
+        }
+    }
 }
 

@@ -22,12 +22,17 @@ public interface MenuService extends IService<Menu> {
     Page<Menu> getMenuPagesByName(String menuName, Integer pageSize, Integer pageNum);
 
     /**
-     * 增加后台菜单
+     * 增加菜单
      */
     boolean addMenu(MenuDto menuDto);
 
     /**
-     * 更新后台菜单
+     * 更新菜单
      */
     boolean updateMenu(MenuDto menuDto);
+
+    /**
+     * 删除菜单
+     */
+    boolean deleteMenu(Long id);
 }
