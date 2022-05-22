@@ -1,14 +1,20 @@
 package com.ccy1277.acs.common.config;
 
 import com.ccy1277.acs.common.properties.SwaggerProperties;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Swagger Api文档 基础配置类
@@ -29,6 +35,9 @@ public abstract class SwaggerConfig {
                 // paths 指定生成API的path
                 .paths(PathSelectors.any())
                 .build()
+                .securityContexts(Arrays.asList(securityContext()))
+                // ApiKey的name需与SecurityReference的reference保持一致
+                .securitySchemes(Arrays.asList(new ApiKey("Authorization", "Bearer", SecurityScheme.In.HEADER.name())))
                 // 文档信息
                 .apiInfo(apiInfo(swaggerProperties));
     }
@@ -41,6 +50,21 @@ public abstract class SwaggerConfig {
                 .contact(new Contact(swaggerProperties.getContactName(), swaggerProperties.getContactUrl(), swaggerProperties.getContactEmail()))
                 .version(swaggerProperties.getVersion())
                 .build();
+    }
+
+    private SecurityContext securityContext() {
+        return SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope
+                = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return singletonList(
+                new SecurityReference("Authorization", authorizationScopes));
     }
 
     /**
