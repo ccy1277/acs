@@ -1,19 +1,26 @@
-# acs权限控制系统
+# **acs权限控制系统**
 
 
 
-## **技术选型**
+## 技术选型
 
 - Spring Boot 2.3.0
+
 - MyBatis-Plus
+
 - SpringSecurity
+
 - jjwt
+
 - Redis
+
 - MySQL
 
+  
 
 
-## **项目结构**
+
+## 项目结构
 
 ```
 - common 公共模块
@@ -35,13 +42,15 @@
 
 
 
-## **系统功能**
+## 系统功能
 
 <img src="./screenshot/fun_list.png" alt="功能" style="zoom: 80%;" />
 
 
 
-## **权限设计思路**
+
+
+## 权限设计思路
 
 <img src="./screenshot/design01.png" style="zoom: 67%;" />
 
@@ -75,8 +84,20 @@
 ​	一个请求完成了认证，且没有抛出异常之后就会到达FilterSecurityInterceptor所负责的鉴权部分
 
 1. 创建实现AbstractSecurityInterceptor接口的过滤器，拦截用户的请求，调用AccessDecisionManager中的decide方法进行鉴权
-
 2. 创建实现FilterInvocationSecurityMetadataSource接口的类，获取路径（key）与权限（value）的map，与请求路径匹配，将匹配成功的value返回给AccessDecisionManager鉴权；
+3. 创建实现AccessDecisionManager接口动态权限决策器，进行权限判定，即authentication对象中拥有的权限是否包含此请求路径所需要的权限；
 
-			3. 创建实现AccessDecisionManager接口动态权限决策器，进行权限判定，即authentication对象中拥有的权限是否包含此请求路径所需要的权限；
+
+
+## 项目启动
+
+1. 请确保在IDEA中安装了[lombok插件](https://projectlombok.org/download)
+2. 创建数据库，运行[SQL文件](./doc/sql/init.sql)
+3. 启动SpringBoot启动类
+
+
+
+## 接口文档
+
+[acs Api](http://127.0.0.1:9090/acs/swagger-ui/index.html)
 
