@@ -1,4 +1,4 @@
-package com.ccy1277.acs.common.entity;
+package com.ccy1277.acs.common.properties;
 
 import lombok.Builder;
 import lombok.Data;

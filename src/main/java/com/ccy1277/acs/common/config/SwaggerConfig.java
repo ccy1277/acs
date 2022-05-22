@@ -1,6 +1,6 @@
 package com.ccy1277.acs.common.config;
 
-import com.ccy1277.acs.common.entity.SwaggerProperties;
+import com.ccy1277.acs.common.properties.SwaggerProperties;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;

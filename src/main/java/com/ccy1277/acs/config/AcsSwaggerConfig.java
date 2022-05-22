@@ -1,7 +1,7 @@
 package com.ccy1277.acs.config;
 
 import com.ccy1277.acs.common.config.SwaggerConfig;
-import com.ccy1277.acs.common.entity.SwaggerProperties;
+import com.ccy1277.acs.common.properties.SwaggerProperties;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
