@@ -16,7 +16,6 @@
 
 - MySQL
 
-  
 
 
 
@@ -93,7 +92,8 @@
 
 1. 请确保在IDEA中安装了[lombok插件](https://projectlombok.org/download)
 2. 创建数据库，运行[SQL文件](./doc/sql/init.sql)
-3. 启动SpringBoot启动类
+3. 开启Redis服务端，配置数据源
+4. 启动SpringBoot启动类
 
 
 
