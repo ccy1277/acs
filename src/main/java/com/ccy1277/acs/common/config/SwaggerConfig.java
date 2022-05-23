@@ -11,10 +11,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
-import static java.util.Collections.singletonList;
 
 /**
  * Swagger Api文档 基础配置类
@@ -28,16 +26,18 @@ public abstract class SwaggerConfig {
                 .select()
                 // 为当前包下controller生成API文档
                 .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getApiBasePackage()))
-                // 为有@Api注解的Controller生成API文档
-//                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
-                // 为有@ApiOperation注解的Controller生成API文档
-//                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 // paths 指定生成API的path
                 .paths(PathSelectors.any())
                 .build()
-                .securityContexts(Arrays.asList(securityContext()))
-                // ApiKey的name需与SecurityReference的reference保持一致
-                .securitySchemes(Arrays.asList(new ApiKey("Authorization", "Bearer", SecurityScheme.In.HEADER.name())))
+                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER.name("JWT Token").build()))
+                .securityContexts(Collections.singletonList(SecurityContext.builder()
+                        .securityReferences(Collections.singletonList(SecurityReference.builder()
+                                .scopes(new AuthorizationScope[0])
+                                .reference("JWT")
+                                .build()))
+                        // 声明作用域
+                        .operationSelector(o -> o.requestMappingPattern().matches("/.*"))
+                        .build()))
                 // 文档信息
                 .apiInfo(apiInfo(swaggerProperties));
     }
@@ -50,21 +50,6 @@ public abstract class SwaggerConfig {
                 .contact(new Contact(swaggerProperties.getContactName(), swaggerProperties.getContactUrl(), swaggerProperties.getContactEmail()))
                 .version(swaggerProperties.getVersion())
                 .build();
-    }
-
-    private SecurityContext securityContext() {
-        return SecurityContext.builder()
-                .securityReferences(defaultAuth())
-                .build();
-    }
-
-    private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope
-                = new AuthorizationScope("global", "accessEverything");
-        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-        authorizationScopes[0] = authorizationScope;
-        return singletonList(
-                new SecurityReference("Authorization", authorizationScopes));
     }
 
     /**
