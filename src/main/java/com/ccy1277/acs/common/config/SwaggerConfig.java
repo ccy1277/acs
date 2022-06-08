@@ -23,13 +23,9 @@ public abstract class SwaggerConfig {
     @Bean
     public Docket createRestApi(){
         return new Docket(DocumentationType.OAS_30)
-                .select()
-                // 为当前包下controller生成API文档
-                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getApiBasePackage()))
-                // paths 指定生成API的path
-                .paths(PathSelectors.any())
-                .build()
-                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER.name("JWT Token").build()))
+                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER
+                    .name("JWT")
+                    .build()))
                 .securityContexts(Collections.singletonList(SecurityContext.builder()
                         .securityReferences(Collections.singletonList(SecurityReference.builder()
                                 .scopes(new AuthorizationScope[0])
@@ -38,8 +34,15 @@ public abstract class SwaggerConfig {
                         // 声明作用域
                         .operationSelector(o -> o.requestMappingPattern().matches("/.*"))
                         .build()))
+                .select()
+                // 为当前包下controller生成API文档
+                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getApiBasePackage()))
+                // paths 指定生成API的path
+                .paths(PathSelectors.any())
+                .build()
                 // 文档信息
                 .apiInfo(apiInfo(swaggerProperties));
+
     }
 
     private ApiInfo apiInfo(SwaggerProperties swaggerProperties){
